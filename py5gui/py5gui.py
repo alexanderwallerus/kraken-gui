@@ -3,6 +3,7 @@ from .utils.plot import Plot, legend    # the relative . is important for a pip 
 import time
 import py5
 from typing import Callable
+import inspect
 
 font_loaded, font = False, None
 
@@ -14,8 +15,17 @@ elements = []
 organizers = []
 
 # the py5 sketch instance to be used by default. It can either be set through use_sketch(sketch) when using 
-# py5 class mode or be infered when using py5 module mode
+# py5 class mode or be infered when using py5 module mode. Setting it through use_sketch() circumvents frame inspection calls. 
 s = None
+
+active = True
+def set_active(on_off:bool):
+    """Enable/Disable UI rendering
+    Args:
+        on_off (bool): Rendering active/inactive
+    """
+    global active
+    active = on_off
 
 def remap(value, inFrom, inTo, outFrom, outTo):
     if inFrom == inTo:
@@ -36,7 +46,10 @@ def use_sketch(sketch:py5.Sketch):
     
     This function allows you to leave out the sketch= argument for created elements in class mode.
     When using py5 in class mode provide the instance you want to connnect to 
-    (typically self in def setup()) as an argument.
+    (typically self in def setup()) as an argument. 
+    Example:
+    def setup(self):
+         py5gui.use_sketch(self)
 
     Args:
         sketch (py5.Sketch, optional): he py5 sketch to be used when in class mode, so typically this argument is self. Defaults to None.
@@ -51,7 +64,11 @@ def use_sketch(sketch:py5.Sketch):
         # this block will auto-add an empty key_pressed() function to the sketch instance to enable the hook.
         def _key_pressed(self, key_event): pass
         s.key_pressed = _key_pressed.__get__(s)
-    s._add_post_hook('key_pressed', 'key_reading_hook', forward_key)
+    if not hasattr(s, '_kraken_gui_hooks_added'):
+        s._add_post_hook('key_pressed', 'key_reading_hook', forward_key)
+        # automatically hook element rendering to happen post draw. run pygui.set_active(False) to disable
+        s._add_post_hook('draw', 'run_overlay_hook', run)
+        s._kraken_gui_hooks_added = True
 
 def forward_key(sketch:py5.Sketch):
     global text_inputs
@@ -59,12 +76,13 @@ def forward_key(sketch:py5.Sketch):
     for text_input in text_inputs:
         text_input.process_key(key, key_code)
 
-def run():
-    global elements
-    for e in elements:
-        e.run()
-    for o in organizers:
-        o.draw()
+def run(sketch:py5.Sketch=None):
+    global elements, active
+    if active:
+        for e in elements:
+            e.run()
+        for o in organizers:
+            o.draw()
 
 class Element:
     def __init__(self, sketch:py5.Sketch=None, pos:tuple=(0,0), label:str='', w:int=30, h:int=30):
@@ -85,8 +103,23 @@ class Element:
 
         if sketch is None:
             if s is None:
-                self.s = py5.get_current_sketch()
-                self.s._add_post_hook('key_pressed', 'key_reading_hook', forward_key)
+                # get_current_sketch() doesn't necessarily succeed in retrieving the self of the element-creating sketch
+                # in class mode => inspect to find the sketch. This is not yet sound for creations in through a deeper 
+                # call-stack, but prevents the need for py5gui.use_sketch(self) in the most common situation.
+                try:
+                    frame = inspect.currentframe()
+                    caller_frame = frame.f_back.f_back
+                    caller_locals = caller_frame.f_locals
+                    caller_self = caller_locals['self']
+                    if isinstance(caller_self, py5.Sketch):
+                        self.s = caller_self
+                except KeyError as e:
+                    # fallback, for module mode
+                    self.s = py5.get_current_sketch()
+                if not hasattr(self.s, '_kraken_gui_hooks_added'):
+                    self.s._add_post_hook('key_pressed', 'key_reading_hook', forward_key)
+                    self.s._add_post_hook('draw', 'run_overlay_hook', run)
+                    self.s._kraken_gui_hooks_added = True
             else:
                 self.s = s
         else:
@@ -271,7 +304,10 @@ class Text_Input(Element):
         """Text Input field. Click to select and write a text input.
         
         IMPORTANT: For the Text_Input element to read your key presses your sketch requires a def key_pressed(key_event): function.
-        This function just has to be defined - can be a stub or empty like:   def key_pressed(key_event): pass   
+        This function just has to be defined - it can be a stub or empty like:
+        def key_pressed(key_event): pass
+        or in class mode:
+        def key_pressed(self, key_event): pass
         
         You can provide a function to be triggered when pressing enter with on_enter.
         This function will receive the written input text as its first argument
@@ -496,8 +532,16 @@ class Organizer:
         
         if sketch is None:
             if s is None:
-                self.s = py5.get_current_sketch()
-                self.s._add_post_hook('key_pressed', 'key_reading_hook', forward_key)
+                try:
+                    frame = inspect.currentframe()
+                    caller_frame = frame.f_back.f_back
+                    caller_locals = caller_frame.f_locals
+                    caller_self = caller_locals['self']
+                    if isinstance(caller_self, py5.Sketch):
+                        self.s = caller_self
+                except KeyError as e:
+                    # fallback, for module mode
+                    self.s = py5.get_current_sketch()
             else:
                 self.s = s
         else:

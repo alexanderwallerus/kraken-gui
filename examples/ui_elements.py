@@ -80,7 +80,6 @@ def setup():
 def draw():
     global background_color
     py5.background(*background_color)
-    ui.run()
     
     # use the following line instead to just run the element stored in my_inputs[0]
     # py5.get_current_sketch().my_inputs[0].run()

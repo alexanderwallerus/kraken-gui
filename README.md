@@ -11,6 +11,47 @@
 
 # Quickstart
 
+## UI elements
+
+### Button
+```python
+import py5
+import py5gui as ui
+
+def hello():
+    print('hello world')
+
+def setup():
+    py5.size(250, 250)
+    ui.Button(label='simple button', pos=(20, 50), on_click=hello)
+
+def draw():
+    py5.background(0)
+
+py5.run_sketch()
+```
+### Toggle
+
+### Slider
+
+### Text_Input
+
+```python
+def print_with_world(text):
+  print(text, ' world')
+
+def setup():
+  ui.Text_Input(pos=(20, 50), label='enter input', default='hello', on_enter=print_with_world)
+
+def key_pressed(self):
+  pass
+```
+## Organizers
+
+### Column Organizer
+
+### Row Organizer
+
 ## Plotting
 
 Example of plotting features:
@@ -94,7 +135,7 @@ plt.scatter(b_xs, b_ys, marker='line')
 - extra options for scatter plots:
   - marker types: `circle`, `line`, `cross`, `square`, `triangle`
   - `marker=` can also receive a string/character (i.e. 'o', '+', '*')
-  - `stroke_weight=` also controls the thickness of the line and cross markers. `diameter=` can control the size of square and circle markers,
+  - `stroke_weight=` also controls the thickness of the line and cross markers. `diameter=` can control the size of square and circle markers
 
 ### multiple plots in the same space
 ```python
