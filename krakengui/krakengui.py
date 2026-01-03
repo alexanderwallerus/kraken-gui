@@ -1,5 +1,5 @@
 import os
-from .utils.plot import Plot, legend    # the relative . is important for a pip install to find modules relative to the parent package (from py5gui.utils.plot import... would also work)
+from .utils.plot import Plot, legend    # the relative . is important for a pip install to find modules relative to the parent package (from krakengui.utils.plot import... would also work)
 import time
 import py5
 from typing import Callable
@@ -49,7 +49,7 @@ def use_sketch(sketch:py5.Sketch):
     (typically self in def setup()) as an argument. 
     Example:
     def setup(self):
-         py5gui.use_sketch(self)
+         krakengui.use_sketch(self)
 
     Args:
         sketch (py5.Sketch, optional): he py5 sketch to be used when in class mode, so typically this argument is self. Defaults to None.
@@ -105,7 +105,7 @@ class Element:
             if s is None:
                 # get_current_sketch() doesn't necessarily succeed in retrieving the self of the element-creating sketch
                 # in class mode => inspect to find the sketch. This is not yet sound for creations in through a deeper 
-                # call-stack, but prevents the need for py5gui.use_sketch(self) in the most common situation.
+                # call-stack, but prevents the need for krakengui.use_sketch(self) in the most common situation.
                 try:
                     frame = inspect.currentframe()
                     caller_frame = frame.f_back.f_back

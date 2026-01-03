@@ -1,7 +1,7 @@
-py5gui/__pycache__/*
+krakengui/__pycache__/*
 
-py5gui/utils/__pycache__/*
+krakengui/utils/__pycache__/*
 examples/__pycache__/*
 
 build/*
-py5gui.egg-info/*
+krakengui.egg-info/*

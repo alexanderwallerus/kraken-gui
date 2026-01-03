@@ -2,21 +2,33 @@
 
 # Setup:
 
-* `pip install git+https://github.com/alexanderwallerus/py5-gui@main`
-* or after a local download you can within the py5gui folder run:
-* `pip install ./`
-* Update to the current version with:
-* `pip install --force-reinstall git+https://github.com/alexanderwallerus/py5-gui@main`
-* py5gui also contains plotting functionalities and an extended print function - print0()
+`pip install git+https://github.com/alexanderwallerus/kraken-gui@main`
+
+Alternatively after a local download you can within the krakengui folder run `pip install ./`
+
+
+Update to the current version with:
+
+`pip install --force-reinstall git+https://github.com/alexanderwallerus/kraken-gui@main`
+
+krakengui also contains a rich set of live-plotting functionalities.
 
 # Quickstart
 
 ## UI elements
 
+All examples use the following imports
+```python
+import py5
+import krakengui as ui
+```
+
+UI elements are added within the sketch's setup() function and will be drawn after the draw loop. You can use `ui.set_active(False)` to disable (or with `True` reenable) UI rendering.
+
 ### Button
 ```python
 import py5
-import py5gui as ui
+import krakengui as ui
 
 def hello():
     print('hello world')
@@ -30,9 +42,28 @@ def draw():
 
 py5.run_sketch()
 ```
+
 ### Toggle
 
+```python
+def print_status(value):
+    print(f'the goggle was moved to {value}')
+
+def setup():
+    py5.size(250, 250)
+    ui.Toggle(labels=['off', 'on'], pos=(20, 50), on_click=print_status)
+```
+
 ### Slider
+
+```python
+def print_value(value):
+    print(f'the slider was moved to {value}')
+
+def setup():
+    py5.size(250, 250)
+    ui.Slider(pos=(20, 50), min=-100, max=100, value=50, on_change=print_value)
+```
 
 ### Text_Input
 
@@ -46,6 +77,11 @@ def setup():
 def key_pressed(self):
   pass
 ```
+
+For the Text_Input element to read your key presses your sketch requires a def key_pressed(key_event): function.
+
+This function just has to be defined - it can be a stub or empty like: `def key_pressed(key_event): pass` or in class mode: `def key_pressed(self, key_event): pass`
+
 ## Organizers
 
 ### Column Organizer
@@ -65,16 +101,16 @@ def draw():
     py5.background(0)
     xs = [1,   2, 2.5,   3]
     ys = [0.5, 2,  -1, 0.5]
-    plt = py5gui.Plot(x=10, y=10, w=500, h=200)
+    plt = krakengui.Plot(x=10, y=10, w=500, h=200)
     plt.plot(xs, ys)
     plt.show()
 ```
-- The py5gui.Plot object can be created outside of the draw() loop (i.e. in `def setup():` and reused for efficiency if needed.
+- The krakengui.Plot object can be created outside of the draw() loop (i.e. in `def setup():` and reused for efficiency if needed.
 - numpy arrays can also be provided to .plot()
 
 ### You can also plot your data as a one-liner
 ```python
-py5gui.Plot(x=10, y=10, w=500, h=200).plot(xs, ys).show()
+krakengui.Plot(x=10, y=10, w=500, h=200).plot(xs, ys).show()
 ```
 - you can chain further .plot(), .scatter() and .axvline() before .show()
 
@@ -84,7 +120,7 @@ def draw():
     py5.background(0)
     xs = [0]
     ys = [0]
-    py5gui.Plot(x=10, y=10, w=500, h=200).plot(xs, ys).show()
+    krakengui.Plot(x=10, y=10, w=500, h=200).plot(xs, ys).show()
     xs.append(py5.frame_count)
     # add values as a random walk. As the next value use the last value + a random value between -1 and +1.
     ys.append(ys[-1] + py5.random(-1.0, 1.0))
@@ -150,7 +186,7 @@ plt.scatter(b_xs, b_ys, marker='line')
 
     vlines = [1.5] # only 1 at position x=1.5
 
-    plt = py5gui.Plot(x=10, y=10, w=500, h=200)
+    plt = krakengui.Plot(x=10, y=10, w=500, h=200)
     plt.plot(plot0_xs, plot0_ys, color=(255,255,0))   # yellow lines
     plt.plot(plot1_xs, plot1_ys, color=(255,0,255))   # purple lines
 
@@ -223,17 +259,17 @@ plt.show(ylimit=[0, 3], autoscale_in_ylimits=(True,True))
 ### define the py5 sketch to be used in py5 class-mode multi-sketch applications
 ```python
 my_sketch = self
-py5gui.Plot(x=10, y=10, w=500, h=200, sketch=my_sketch)
+krakengui.Plot(x=10, y=10, w=500, h=200, sketch=my_sketch)
 ```
 ### plot legends
 ```python
-py5gui.legend({'graph 0': (0, 255, 255), 'graph 1': (255, 0, 0)}, 10, 10)
+krakengui.legend({'graph 0': (0, 255, 255), 'graph 1': (255, 0, 0)}, 10, 10)
 ```
 - the fist argument is a color-lookup dictionary of labels and colors, the 2nd and 3rd are the x and y coordinates to draw the legend
 - optional arguments
   - `horizontal=False` to draw the legend items vertically
   - `frame=False` to not draw a boundary rectangle
-  - `img = py5gui.legend(..., to_graphics=True)` allows rendering the legend into a py5image like with the [plot analog](#render-to-py5image-instead-of-into-the-sketch)
+  - `img = krakengui.legend(..., to_graphics=True)` allows rendering the legend into a py5image like with the [plot analog](#render-to-py5image-instead-of-into-the-sketch)
   - `sketch=` to specify a py5 sketch like with the [plot analog](#define-the-py5-sketch-to-be-used-in-py5-class-mode-multi-sketch-applications)
 
 ### further customization

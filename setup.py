@@ -2,14 +2,14 @@
 import setuptools
 
 if __name__ == "__main__":
-    setuptools.setup(name='py5gui',
+    setuptools.setup(name='krakengui',
                      version='0.1',
                      # packages=setuptools.find_packages(),
-                     packages=['py5gui', 'py5gui.utils'],
+                     packages=['krakengui', 'krakengui.utils'],
                      
                      # include data files
-                     package_dir={'py5gui': 'py5gui'},
-                     package_data={'py5gui': ['fonts/roboto/*.txt', 'fonts/roboto/*.ttf']},
+                     package_dir={'krakengui': 'krakengui'},
+                     package_data={'krakengui': ['fonts/roboto/*.txt', 'fonts/roboto/*.ttf']},
                      # include_package_data=True, #include data files defined in MANIFEST.in
                      
                      install_requires=['pynput']

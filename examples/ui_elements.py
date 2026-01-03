@@ -1,8 +1,8 @@
 import py5
 import sys, os
 
-sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..')) # insert and use the local py5gui package in the python path before an environment install
-import py5gui as ui
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..')) # insert and use the local krakengui package in the python path before an environment install
+import krakengui as ui
 
 background_color = (0,)
 def change_background():

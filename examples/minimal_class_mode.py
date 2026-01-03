@@ -1,5 +1,5 @@
 from py5 import Sketch
-import py5gui as ui
+import krakengui as ui
 
 def hello():
     print('hello world')
