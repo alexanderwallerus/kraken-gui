@@ -3,7 +3,7 @@ import setuptools
 
 if __name__ == "__main__":
     setuptools.setup(name='krakengui',
-                     version='0.1',
+                     version='0.1.0',
                      # packages=setuptools.find_packages(),
                      packages=['krakengui', 'krakengui.utils'],
                      

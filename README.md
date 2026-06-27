@@ -6,7 +6,6 @@
 
 Alternatively after a local download you can within the krakengui folder run `pip install ./`
 
-
 Update to the current version with:
 
 `pip install --force-reinstall git+https://github.com/alexanderwallerus/kraken-gui@main`
